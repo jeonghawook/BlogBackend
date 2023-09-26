@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import config from '../configs/typeorm.config';
+import { typeORMConfig } from '../configs/typeorm.config';
 import { AtGuard } from 'src/users/common/guards/at.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { InMemoryModule } from 'src/in-memory/in-memory.module';
@@ -28,7 +28,7 @@ import { ConfigModule } from '@nestjs/config';
     MongooseModule.forRoot(
       'mongodb+srv://Hawook:8785@cluster0.olr8a.mongodb.net/?retryWrites=true&w=majority',
     ),
-    TypeOrmModule.forRoot(config),
+    TypeOrmModule.forRoot(typeORMConfig),
     InMemoryModule,
     PostsModule,
     CommentsModule,
