@@ -50,7 +50,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/BlogBackend:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/blogbackend:${{ github.sha }}
 
   deploy:
     needs: build
