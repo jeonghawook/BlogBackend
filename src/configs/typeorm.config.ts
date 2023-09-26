@@ -5,8 +5,8 @@ const config: TypeOrmModuleOptions = {
     host: 'database.cbexcccq21ba.ap-northeast-2.rds.amazonaws.com',
     port: 5432,
     username: 'postgres',
-    password: '1234',
-    database: 'database2',
+    password: 'gkdnr8785',
+    database: 'database',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true, // Only for develnpmopment. Set to false in production.
 };
