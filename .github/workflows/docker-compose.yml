@@ -5,8 +5,24 @@ on:
     branches: [master]
   
 jobs:
+  #test:
+    #runs-on: ubuntu-latest
+    #strategy:
+      #matrix:
+        #node-version: [18.x]
 
- build:
+    #steps:
+      #- uses: actions/checkout@v3
+      #- name: Setup node.js ${{ matrix.node-version }}
+        #uses: actions/setup-node@v3
+        #with:
+          #node-version: ${{ matrix.node-version }}
+          #cache: 'npm'
+      #- run: npm ci
+      #- run: npm test
+
+  build:
+    #needs: test
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +50,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/BlogBackend:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/quiz:${{ github.sha }}
 
   deploy:
     needs: build
