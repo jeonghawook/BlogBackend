@@ -9,6 +9,7 @@ export const typeORMConfig: TypeOrmModuleOptions = {
     database: 'database1',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true, // Only for develnpmopment. Set to false in production.
-}
+
+  }
 
 
