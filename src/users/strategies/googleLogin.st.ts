@@ -27,8 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       console.log(name, accessToken, refreshToken)
       const user = {
         email: emails[0].value,
-        firstName: name.familyName,
-        lastName: name.givenName,
+
       };
       done(null, user);
     } catch (error) {
