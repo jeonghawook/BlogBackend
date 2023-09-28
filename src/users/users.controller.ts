@@ -11,7 +11,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
+import { GoogleRequestDTO, LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
 import { Users } from './users.entity';
 import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
@@ -78,8 +78,9 @@ export class UsersController {
   @Public()
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req: Request, @Res() res: Response) {
-    
+  async googleCallback(@Req() req: GoogleRequestDTO, @Res({ passthrough: true }) res: Response) {
+    const { email , fullName } = req.user
+    console.log(email, fullName)
   
   }
 }
