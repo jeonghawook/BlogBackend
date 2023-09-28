@@ -11,11 +11,17 @@ import {
   Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { GoogleRequestDTO, LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
+import {
+  GoogleRequestDTO,
+  LoginDto,
+  SignupDto,
+  Tokens,
+} from './dtos/users-dtos';
 import { Users } from './users.entity';
 import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
 import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('users')
 export class UsersController {
@@ -51,7 +57,7 @@ export class UsersController {
       throw error;
     }
   }
-  @Public()
+
   @UseGuards(RTGuard)
   @Post('/refresh')
   async refreshToken(
@@ -70,17 +76,21 @@ export class UsersController {
     }
   }
 
-  @Public()
-  @Get('/login/google') //restAPI만들기. 엔드포인트는 /login/google.
-  @UseGuards(AuthGuard('google')) //인증과정을 거쳐야하기때문에 UseGuards를 써주고 passport인증으로 AuthGuard를 써준다. 이름은 google로
-  async loginGoogle() {}
 
-  @Public()
-  @Get('/google/callback')
-  @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req: GoogleRequestDTO, @Res({ passthrough: true }) res: Response) {
-    const { email , fullName } = req.user
-    console.log(email, fullName)
-  
+  @Get('/login/:socialLogin') 
+  @UseGuards(AuthGuard('socialLogin')) 
+  async socialLogin() {}
+
+
+  @Get('/:socialLogin/callback')
+  @UseGuards(AuthGuard('socialLogin'))
+  async socialLoginCallback(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Tokens> {
+    const { email, fullName } = req.user;
+    console.log(email, fullName);
+    const tokens = await this.usersService.socialLogin(fullName, email);
+    return tokens;
   }
 }

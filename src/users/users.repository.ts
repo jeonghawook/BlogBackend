@@ -47,4 +47,14 @@ export class UsersRepository {
   async setRefreshToken(userId: number, refreshToken: string) {
     await this.users.update({ userId }, { refreshToken });
   }
+  
+  async socialSignUp(userEmail: string, nickname: string) {
+    try {
+    const user = this.users.create({userEmail: userEmail, nickname:nickname})  
+    await this.users.save(user)
+    return user
+    } catch (error) {
+      
+    }
+}
 }
