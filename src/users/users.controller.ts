@@ -77,12 +77,12 @@ export class UsersController {
     }
   }
 
-
+  @Public()
   @Get('/login/google')  // /:socialLogin으로 병합할수잇을까?
   @UseGuards(google) //AuthGuard만 dynamic하게 바꿔주면된다.흠.
   async googlelLogin() {}
 
-
+  @Public()
   @Get('/google/callback')
   @UseGuards(google)
   async googleLoginCallback(
@@ -95,12 +95,12 @@ export class UsersController {
     return tokens;
   }
 
-
+  @Public()
   @Get('/login/kakao')  // /:socialLogin으로 병합할수잇을까?
   @UseGuards(AuthGuard('kakao')) //AuthGuard만 dynamic하게 바꿔주면된다.흠.
   async kakaoLogin() {}
 
-
+  @Public()
   @Get('/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoLoginCallback(
