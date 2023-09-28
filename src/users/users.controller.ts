@@ -21,6 +21,7 @@ import { Users } from './users.entity';
 import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { google } from './common/guards/gg.guard';
 
 
 @Controller('users')
@@ -76,15 +77,15 @@ export class UsersController {
     }
   }
 
-  @Public()
-  @Get('/login/:socialLogin') 
-  @UseGuards(AuthGuard('socialLogin')) 
-  async socialLogin() {}
+
+  @Get('/login/google')  // /:socialLogin으로 병합할수잇을까?
+  @UseGuards(google) //AuthGuard만 dynamic하게 바꿔주면된다.흠.
+  async googlelLogin() {}
 
 
-  @Get('/:socialLogin/callback')
-  @UseGuards(AuthGuard('socialLogin'))
-  async socialLoginCallback(
+  @Get('/google/callback')
+  @UseGuards(google)
+  async googleLoginCallback(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Tokens> {
@@ -93,4 +94,23 @@ export class UsersController {
     const tokens = await this.usersService.socialLogin(fullName, email);
     return tokens;
   }
+
+
+  @Get('/login/kakao')  // /:socialLogin으로 병합할수잇을까?
+  @UseGuards(AuthGuard('kakao')) //AuthGuard만 dynamic하게 바꿔주면된다.흠.
+  async kakaoLogin() {}
+
+
+  @Get('/kakao/callback')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoLoginCallback(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Tokens> {
+    const { email, fullName } = req.user;
+    console.log(email, fullName);
+    const tokens = await this.usersService.socialLogin(fullName, email);
+    return tokens;
+  }
+
 }
