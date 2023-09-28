@@ -8,15 +8,18 @@ import { UsersRepository } from './users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 import { GoogleStrategy } from './strategies/googleLogin.st';
+import { KakaoStrategy } from './strategies/kakaoLogin.st';
 
 @Module({
-  imports: [JwtModule.register({}),
-    TypeOrmModule.forFeature([Users]),],
+  imports: [JwtModule.register({}), TypeOrmModule.forFeature([Users])],
   controllers: [UsersController],
-  providers: [UsersService,
-    UsersRepository, 
-    AtStrategy, 
+  providers: [
+    UsersService,
+    UsersRepository,
+    AtStrategy,
     RtStrategy,
-  GoogleStrategy]
+    GoogleStrategy,
+    KakaoStrategy,
+  ],
 })
-export class UsersModule { }
+export class UsersModule {}

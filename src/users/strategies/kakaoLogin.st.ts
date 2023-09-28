@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
 
+
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
   constructor() {
     super({
-      clientID: '8ffafcf35ddb5077a2c8b940e4b01da1',
-      clientSecret: 'WWyIRm0zec63gzKzSiZYEYgrLIYxbFGq',
-      callbackURL: 'https://pocom.shop/users/kakao/callback',
+      clientID: '51f39f3e4994f41f3dd78b0a4d174a86',
+      clientSecret: '',
+      callbackURL: 'http://localhost:3000/users/kakao/callback',
     });
   }
 
