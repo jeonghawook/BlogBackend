@@ -23,7 +23,7 @@ export class Users {
     @Unique(['userEmail'])
     userEmail: string;
 
-    @Column()
+    @Column({nullable:true})
     password: string;
 
     @Column({ nullable: true })

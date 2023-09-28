@@ -50,10 +50,12 @@ export class UsersRepository {
   
   async socialSignUp(userEmail: string, nickname: string) {
     try {
-    const user = this.users.create({userEmail: userEmail, nickname:nickname})  
+    const user = this.users.create({userEmail: userEmail, userName:nickname, nickname:nickname})  
     await this.users.save(user)
+    console.log("Create success")
     return user
     } catch (error) {
+      console.log(error)
       
     }
 }
