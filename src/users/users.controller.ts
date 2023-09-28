@@ -76,7 +76,7 @@ export class UsersController {
     }
   }
 
-
+  @Public()
   @Get('/login/:socialLogin') 
   @UseGuards(AuthGuard('socialLogin')) 
   async socialLogin() {}
