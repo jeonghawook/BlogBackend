@@ -79,7 +79,7 @@ export class UsersController {
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: Request, @Res() res: Response) {
-    console.log(req);
-    console.log(res);
+    
+  
   }
 }
