@@ -7,9 +7,9 @@ import { Strategy } from 'passport-kakao';
 export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
   constructor() {
     super({
-      clientID: '51f39f3e4994f41f3dd78b0a4d174a86',
+      clientID: process.env.KAKAO_ID,
       clientSecret: '',
-      callbackURL: 'http://localhost:3000/users/kakao/callback',
+      callbackURL: process.env.KAKAO_CALLBACK_URL,
     });
   }
 

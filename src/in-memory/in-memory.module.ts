@@ -8,11 +8,11 @@ import { Module } from '@nestjs/common';
             readyLog: true,
             config: [
                 {
-                    namespace: 'notValuable',
-                    host: "redis-12799.c99.us-east-1-4.ec2.cloud.redislabs.com",
-                    port: 12799
+                    namespace: process.env.REDIS_NAME,
+                    host: process.env.REDIS_HOST,
+                    port: parseInt(process.env.REDIS_PORT)
                     ,
-                    password: "FU2QLrIy9r01vAzFcVFaqFpQGZF20asN"
+                    password: process.env.REDIS_PASSWORD
                 },
             ]
         })

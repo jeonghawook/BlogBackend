@@ -33,6 +33,13 @@ export class PostsController {
 
   }
 
+  @Get('/member')
+  async getFollowinPosts(
+    @GetUser() user:Users
+  ):Promise<Posts[]>{
+    return await this.postsService.getFollowingPosts(user.userId);
+  }
+
   @Public()
   @Get('/:userId/main')
   async getUserPosts(
