@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/users/users.entity';
 import { CreatePostDTO } from './dtos/postDTO';
 import { Posts } from './posts.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, In } from 'typeorm';
 
 @Injectable()
 export class PostsRepository {
@@ -18,6 +18,17 @@ export class PostsRepository {
     });
   }
 
+  async getFollowingPosts(userId:number, following:number[]):Promise<Posts[]>{
+    return await this.posts.find({
+      where: {
+        userId: In(following)
+       },
+      order:{
+        createdAt: 'DESC'
+      }
+    })
+  }
+
   async getUserPosts(userId: number): Promise<Posts[]> {
     return await this.posts.find({ where: { userId } });
   }
@@ -27,6 +38,7 @@ export class PostsRepository {
   }
 
   async createPost(user: Users, createPostDTO: CreatePostDTO): Promise<void> {
+    console.log(user)
     const {
       postDescription,
       location,

@@ -1,43 +1,62 @@
 import { Comments } from 'src/comments/comments.entity';
 import { Posts } from 'src/posts/posts.entity';
-import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany, JoinColumn, IntegerType } from 'typeorm';
-
-
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Unique,
+  OneToMany,
+  JoinColumn,
+  IntegerType,
+} from 'typeorm';
 
 @Entity()
 export class Users {
-    @PrimaryGeneratedColumn()
-    userId: number;
+  @PrimaryGeneratedColumn()
+  userId: number;
 
-    @Column()
-    @Unique(['nickname'])
-    nickname: string;
+  @Column()
+  @Unique(['nickname'])
+  nickname: string;
 
-    @Column()
-    userName: string;
+  @Column()
+  userName: string;
 
-    @Column({default:false})
-    idAdmin:boolean
-    
-    @Column()
-    @Unique(['userEmail'])
-    userEmail: string;
+  @Column({ default: false })
+  idAdmin: boolean;
 
-    @Column({nullable:true})
-    password: string;
+  @Column()
+  @Unique(['userEmail'])
+  userEmail: string;
 
-    @Column({ nullable: true })
-    refreshToken: string;
+  @Column({ nullable: true })
+  password: string;
 
-    @Column({ default: false })
-    isActive: boolean;
+  @Column({ nullable: true })
+  refreshToken: string;
 
-    @Column({ default: 0 })
-    rank: number;
+  @Column({ default: false })
+  isActive: boolean;
 
-    @OneToMany(()=> Posts, (posts)=>{posts.user})
-    posts:Posts[]
+  @Column({ default: 0 })
+  rank: number;
 
-    @OneToMany(()=>Comments, (comments)=>{comments.user})
-    comments:Comments[]
+  @Column({ type: 'integer', array: true, nullable: true })
+  following: number[];
+
+  @OneToMany(
+    () => Posts,
+    (posts) => {
+      posts.user;
+    },
+  )
+  posts: Posts[];
+
+  @OneToMany(
+    () => Comments,
+    (comments) => {
+      comments.user;
+    },
+  )
+  comments: Comments[];
 }

@@ -13,8 +13,12 @@ export class PostsService {
     return await this.postsRepository.getPosts();
   }
 
-  async getFollowingPosts(userId:number):Promise<Posts[]>{
-    return await this.postsRepository.getFollowingPosts(userId);
+  async getFollowingPosts(userId:number,following:number[]):Promise<Posts[]>{
+    if(following.length===0){
+      return await this.postsRepository.getPosts();
+    }
+    return await this.postsRepository.getFollowingPosts(userId, following);
+
   }
 
   async getUserPosts(userId: number): Promise<Posts[]> {

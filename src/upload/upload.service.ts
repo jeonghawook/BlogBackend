@@ -23,7 +23,7 @@ export class UploadService {
             })
         )
         const s3Region = this.configService.getOrThrow('AWS_S3_REGION');
-        const s3ObjectUrl = `https://blogbucket2.${s3Region}.amazonaws.com/${objectKey}`;
+        const s3ObjectUrl = `https://blogbucket2.s3.${s3Region}.amazonaws.com/${objectKey}`;
         return s3ObjectUrl
     }
 }

@@ -66,7 +66,7 @@ export class UsersService {
 
   async login(loginDto: LoginDto): Promise<Tokens> {
     const { userEmail, password } = loginDto;
-
+    console.log(loginDto)
     const user = await this.userRepository.findEmail(userEmail);
 
     if (!user) throw new NotFoundException('존재하지 않는 이메일입니다.');

@@ -11,7 +11,7 @@ import { InMemoryModule } from 'src/in-memory/in-memory.module';
 import { PostsModule } from 'src/posts/posts.module';
 import { CommentsModule } from 'src/comments/comments.module';
 import { UploadModule } from 'src/upload/upload.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [AppController],
@@ -28,12 +28,19 @@ import { ConfigModule } from '@nestjs/config';
     MongooseModule.forRoot(
       'mongodb+srv://Hawook:8785@cluster0.olr8a.mongodb.net/?retryWrites=true&w=majority',
     ),
-    TypeOrmModule.forRoot(typeORMConfig),
+    TypeOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => typeORMConfig(configService),
+      inject: [ConfigService],
+    }),
     InMemoryModule,
     PostsModule,
     CommentsModule,
     UploadModule,
-    ConfigModule.forRoot({isGlobal:true})
+    ConfigModule.forRoot(
+      {isGlobal:true,
+        envFilePath: '.env',
+      },
+      )
   ],
 })
 export class AppModule {}
