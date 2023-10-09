@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/users/users.entity';
 import { CreatePostDTO } from './dtos/postDTO';
 import { Posts } from './posts.entity';
-import { DeleteResult, Repository, In } from 'typeorm';
+import { DeleteResult, Repository, In, Not, IsNull } from 'typeorm';
 
 @Injectable()
 export class PostsRepository {
@@ -14,6 +14,7 @@ export class PostsRepository {
       .createQueryBuilder('posts')
       .leftJoinAndSelect('posts.user', 'user', 'posts.userId = user.userId')
       .select(['posts', 'user.nickname'])
+      .orderBy('posts.createdAt', 'DESC') 
       .getMany(); // Use getMany() to retrieve an array of results
   }
 
@@ -104,17 +105,33 @@ export class PostsRepository {
     await this.posts.save(findPost);
   }
 
-  async syncStories(data, userId: number): Promise<void> {
+  async syncStories(data, userId:number):Promise<void>{
+
     try {
-      for (const postData of data.data) {
+      const latestKakaoPost = await this.posts.findOne({
+        where: {
+          kakao_postId: Not(IsNull()),
+        },
+        order: {
+          postId: 'DESC', 
+           },
+      });
+  
+        const lastKakaoPostId = latestKakaoPost.kakao_postId;
+
+      
+      for(let i = data.data.length; i > 0 ; i-- ){
+        const postData= data.data[i]
         const kakao_postId = postData.id;
+        if(kakao_postId === lastKakaoPostId){
+          break;
+        }
+
         const postDescription = postData.content;
         const imagesData = postData.media;
+        const createdAt = postData.created_at;
         const largeImages = [];
         if (imagesData !== undefined) {
-          console.log(imagesData.length);
-
-       
 
           for (let i = 0; i < imagesData.length; i++) {
             const largeImageUrl = imagesData[i].large;
@@ -126,6 +143,40 @@ export class PostsRepository {
           postDescription,
           images: largeImages,
           userId,
+          createdAt
+        });
+
+        await this.posts.save(kakaoPost);
+      }
+
+    } catch (error) {
+      
+    }
+  }
+
+
+  async insertStories(data, userId: number): Promise<void> {
+    try {
+      for (let i = data.data.length - 1; i >= 0; i--) {
+        const postData= data.data[i]
+        const kakao_postId = postData.id;
+        const postDescription = postData.content;
+        const imagesData = postData.media;
+        const createdAt = postData.created_at;
+        const largeImages = [];
+        if (imagesData !== undefined) {
+
+          for (let i = 0; i < imagesData.length; i++) {
+            const largeImageUrl = imagesData[i].large;
+            largeImages.push(largeImageUrl);
+          }
+        }
+        const kakaoPost = this.posts.create({
+          kakao_postId,
+          postDescription,
+          images: largeImages,
+          userId,
+          createdAt
         });
 
         await this.posts.save(kakaoPost);

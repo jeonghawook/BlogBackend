@@ -11,7 +11,7 @@ export class PostsService {
 
   constructor(private postsRepository: PostsRepository) {}
 
-  async syncStories(kakaoToken: string,userId:number) {
+  async insertStories(kakaoToken: string,userId:number) {
     try {
       const url = 'https://kapi.kakao.com/v1/api/story/mystories';
       const params = {};
@@ -22,13 +22,15 @@ export class PostsService {
       headers,
       params
     });
-   
+   console.log(data)
     const findData = await this.postsRepository.getUserPosts(userId)
   
     if(findData.length === 0){
-      await this.postsRepository.syncStories(data,userId)
+      await this.postsRepository.insertStories(data,userId)
     }
-   
+      await this.postsRepository.syncStories(data,userId)
+
+
     } catch (error) {
       console.log(error)
     }

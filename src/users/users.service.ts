@@ -66,7 +66,6 @@ export class UsersService {
 
   async login(loginDto: LoginDto): Promise<Tokens> {
     const { userEmail, password } = loginDto;
-    console.log(loginDto)
     const user = await this.userRepository.findEmail(userEmail);
 
     if (!user) throw new NotFoundException('존재하지 않는 이메일입니다.');
@@ -107,13 +106,14 @@ export class UsersService {
         HttpStatus.UNAUTHORIZED,
       );
     }
+   
     await this.tokenExpiration(user.userId, RTfromRedis);
 
     return await this.getAccessToken(user);
   }
 
   async tokenExpiration(userId: number, refreshToken: string): Promise<void> {
-    const decodedToken = this.jwtService.verify(refreshToken);
+    const decodedToken = this.jwtService.verify(refreshToken, {secret: "RTlife4u"});
     const refreshTokenExp = new Date(decodedToken.exp * 1000);
     console.log(refreshTokenExp);
     if (refreshTokenExp < new Date()) {

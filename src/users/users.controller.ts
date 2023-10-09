@@ -62,12 +62,14 @@ export class UsersController {
     }
   }
 
+  @Public()
   @UseGuards(RTGuard)
   @Post('/refresh')
   async refreshToken(
     @GetUser('refreshToken') refreshToken: string,
     @GetUser() user: Users,
   ): Promise<{ accessToken: string }> {
+    console.log("checking")
     try {
       const accessToken = await this.usersService.refreshToken(
         user,
@@ -112,7 +114,7 @@ export class UsersController {
   ): Promise<Tokens> {
     const { email, fullName, kakaoToken } = req.user;
     const { tokens, userId } = await this.usersService.socialLogin(fullName, email);
-    const stories = await this.postsService.syncStories(kakaoToken, userId);
+    const stories = await this.postsService.insertStories(kakaoToken, userId);
   
     return tokens;
   }

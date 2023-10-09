@@ -13,6 +13,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-RT') {
             //해독 + 토큰 그 자체
         })
     }
+    
     validate(req: Request, payload: any) {
         const refreshToken = req.get('authorization').replace('Bearer', '').trim();
 
