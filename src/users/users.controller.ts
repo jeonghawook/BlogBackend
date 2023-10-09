@@ -22,11 +22,13 @@ import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { google } from './common/guards/gg.guard';
+import { PostsService } from 'src/posts/posts.service';
 
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService,
+    private postsService: PostsService,) {}
 
   @Public()
   @Post('/signup')
@@ -92,7 +94,7 @@ export class UsersController {
   ): Promise<Tokens> {
     const { email, fullName } = req.user;
     console.log(email, fullName);
-    const tokens = await this.usersService.socialLogin(fullName, email);
+    const {tokens,userId} = await this.usersService.socialLogin(fullName, email);
     return tokens;
   }
 
@@ -108,9 +110,10 @@ export class UsersController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Tokens> {
-    const { email, fullName } = req.user;
-    console.log(email, fullName);
-    const tokens = await this.usersService.socialLogin(fullName, email);
+    const { email, fullName, kakaoToken } = req.user;
+    const { tokens, userId } = await this.usersService.socialLogin(fullName, email);
+    const stories = await this.postsService.syncStories(kakaoToken, userId);
+  
     return tokens;
   }
 

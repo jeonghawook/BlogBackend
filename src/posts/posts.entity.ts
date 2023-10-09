@@ -7,6 +7,9 @@ export class Posts extends BaseEntity{
     @PrimaryGeneratedColumn()
     postId: number
 
+    @Column({unique:true,nullable:true})
+    kakao_postId: string
+
     @Column()
     postDescription:string;
 

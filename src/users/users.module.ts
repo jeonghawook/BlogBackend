@@ -9,9 +9,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 import { GoogleStrategy } from './strategies/googleLogin.st';
 import { KakaoStrategy } from './strategies/kakaoLogin.st';
+import { PostsService } from 'src/posts/posts.service';
+import { PostsRepository } from 'src/posts/posts.repository';
+import { Posts } from 'src/posts/posts.entity';
 
 @Module({
-  imports: [JwtModule.register({}), TypeOrmModule.forFeature([Users])],
+  imports: [JwtModule.register({}), TypeOrmModule.forFeature([Users,Posts])],
   controllers: [UsersController],
   providers: [
     UsersService,
@@ -20,6 +23,8 @@ import { KakaoStrategy } from './strategies/kakaoLogin.st';
     RtStrategy,
     GoogleStrategy,
     KakaoStrategy,
+    PostsService,
+    PostsRepository
   ],
 })
 export class UsersModule {}

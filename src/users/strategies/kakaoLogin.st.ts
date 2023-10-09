@@ -9,7 +9,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
     super({
       clientID: process.env.KAKAO_ID,
       clientSecret: '',
-      callbackURL: process.env.KAKAO_CALLBACK_URL,
+      callbackURL: "http://localhost:3000/users/kakao/callback",
     });
   }
 
@@ -17,9 +17,11 @@ export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
     const response = data._json.kakao_account;
     const fullName = response.profile.nickname
     const email = response.email
+    const kakaoToken = accessToken;
     const user = {
       fullName,
-      email
+      email,
+      kakaoToken
     }
     return  user ;
   }

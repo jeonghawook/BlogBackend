@@ -10,23 +10,25 @@ export class PostsRepository {
   constructor(@InjectRepository(Posts) private posts: Repository<Posts>) {}
 
   async getPosts(): Promise<Posts[]> {
-    return await this.posts.find({
-      order: {
-        createdAt: 'DESC',
-        updatedAt: 'DESC',
-      },
-    });
+    return await this.posts
+      .createQueryBuilder('posts')
+      .leftJoinAndSelect('posts.user', 'user', 'posts.userId = user.userId')
+      .select(['posts', 'user.nickname'])
+      .getMany(); // Use getMany() to retrieve an array of results
   }
 
-  async getFollowingPosts(userId:number, following:number[]):Promise<Posts[]>{
+  async getFollowingPosts(
+    userId: number,
+    following: number[],
+  ): Promise<Posts[]> {
     return await this.posts.find({
       where: {
-        userId: In(following)
-       },
-      order:{
-        createdAt: 'DESC'
-      }
-    })
+        userId: In(following),
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   async getUserPosts(userId: number): Promise<Posts[]> {
@@ -38,7 +40,8 @@ export class PostsRepository {
   }
 
   async createPost(user: Users, createPostDTO: CreatePostDTO): Promise<void> {
-    console.log(user)
+    console.log(user);
+    console.log(createPostDTO);
     const {
       postDescription,
       location,
@@ -48,12 +51,13 @@ export class PostsRepository {
       images,
       category,
     } = createPostDTO;
+    console.log(postDescription);
     const newPost = this.posts.create({
       postDescription,
       location,
       images,
       group,
-      tags,
+
       ImageData,
       category,
       userId: user.userId,
@@ -98,5 +102,36 @@ export class PostsRepository {
       category,
     });
     await this.posts.save(findPost);
+  }
+
+  async syncStories(data, userId: number): Promise<void> {
+    try {
+      for (const postData of data.data) {
+        const kakao_postId = postData.id;
+        const postDescription = postData.content;
+        const imagesData = postData.media;
+        const largeImages = [];
+        if (imagesData !== undefined) {
+          console.log(imagesData.length);
+
+       
+
+          for (let i = 0; i < imagesData.length; i++) {
+            const largeImageUrl = imagesData[i].large;
+            largeImages.push(largeImageUrl);
+          }
+        }
+        const kakaoPost = this.posts.create({
+          kakao_postId,
+          postDescription,
+          images: largeImages,
+          userId,
+        });
+
+        await this.posts.save(kakaoPost);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
