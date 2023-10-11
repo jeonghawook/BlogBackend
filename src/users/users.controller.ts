@@ -114,7 +114,7 @@ export class UsersController {
   ): Promise<Tokens> {
     const { email, fullName, kakaoToken } = req.user;
     const { tokens, userId } = await this.usersService.socialLogin(fullName, email);
-    const stories = await this.postsService.insertStories(kakaoToken, userId);
+    await this.postsService.insertStories(kakaoToken, userId);
   
     return tokens;
   }

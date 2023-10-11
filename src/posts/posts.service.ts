@@ -22,9 +22,10 @@ export class PostsService {
       headers,
       params
     });
-   console.log(data)
-    const findData = await this.postsRepository.getUserPosts(userId)
   
+    const findData = await this.postsRepository.getUserPosts(userId)
+    
+
     if(findData.length === 0){
       await this.postsRepository.insertStories(data,userId)
     }

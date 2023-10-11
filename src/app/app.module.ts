@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
@@ -12,6 +12,9 @@ import { PostsModule } from 'src/posts/posts.module';
 import { CommentsModule } from 'src/comments/comments.module';
 import { UploadModule } from 'src/upload/upload.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ChatGateway } from 'src/chat/chat.gateway';
+import { ChatModule } from 'src/chat/chat.module';
+import { HttpLoggerMiddleware } from 'src/middleware/logger';
 
 @Module({
   controllers: [AppController],
@@ -22,6 +25,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useClass: AtGuard,
       
     },
+    ChatGateway,
+    HttpLoggerMiddleware,
   ],
   imports: [
     UsersModule,
@@ -36,6 +41,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     PostsModule,
     CommentsModule,
     UploadModule,
+    ChatModule,
     ConfigModule.forRoot(
       {isGlobal:true,
         envFilePath: '.env',
@@ -43,4 +49,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       )
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+   consumer.apply(HttpLoggerMiddleware).forRoutes('*')
+
+  }
+}
