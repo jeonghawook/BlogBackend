@@ -40,7 +40,7 @@ export class UsersService {
         nickname,
         rank,
         userId,
-        isActive,
+        isActive:true,
       },
       {
         secret: 'RTlife4u',
@@ -55,7 +55,7 @@ export class UsersService {
         nickname,
         rank,
         userId,
-        isActive,
+        isActive:true,
       },
       {
         secret: 'ATlife4u', //env 파일에 저장할것

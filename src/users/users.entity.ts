@@ -19,7 +19,7 @@ export class Users {
   @Unique(['nickname'])
   nickname: string;
 
-  @Column()
+  @Column({nullable:true})
   userName: string;
 
   @Column({ default: false })
@@ -59,4 +59,5 @@ export class Users {
     },
   )
   comments: Comments[];
+
 }

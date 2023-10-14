@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { GetUser } from 'src/users/common/decorators';
+import { GetUser, Public } from 'src/users/common/decorators';
 import { Users } from 'src/users/users.entity';
 
 
@@ -12,15 +12,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private jwtService: JwtService,
   ) {}
 
-
+  private connectedUsers = new Map<Users, string>();
 
   @WebSocketServer()
-
   private server: Server; // Initialize the server property
-
   private logger: Logger = new Logger('ChatGateway');
   
-  handleConnection(client: Socket) {
+  handleConnection(
+    client: Socket, 
+    ) {
     // Handle WebSocket connection
     const accessToken = client.handshake.query.accessToken;
 
@@ -30,6 +30,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // Verify the access token using your JWT service
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
       // Notify other clients that a user has joined
+       this.connectedUsers.set( user.userId, user.nickname); 
+       console.log(this.connectedUsers)
         this.logger.log(`User ${user.userId} connected`);
         this.server.emit('userJoined', { userId : user.userId });
      
@@ -56,6 +58,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // Verify the access token using your JWT service
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
      // Now, 'user' contains the user information, and the access token is valid.
+     this.connectedUsers.delete(user.userId)
        this.server.emit('userLeft', { userId:user.userId });
      
       } catch (error) {
@@ -81,4 +84,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Broadcast the message to the recipient(s)
     client.to(recipientId).emit('chatMessage', { text, senderId: client.id });
   }
+  
+  @SubscribeMessage('listConnectedUsers')
+  handleListConnectedUsers(client: Socket) {
+  // Get the list of connected user objects from the map
+  const connectedUserList = Array.from(this.connectedUsers.keys());
+  client.emit('connectedUsers', connectedUserList);
+}
 }
