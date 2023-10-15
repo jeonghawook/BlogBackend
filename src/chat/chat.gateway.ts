@@ -1,8 +1,9 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { GetUser, Public } from 'src/users/common/decorators';
+import { AtGuard } from 'src/users/common/guards/at.guard';
 import { Users } from 'src/users/users.entity';
 
 
@@ -17,36 +18,32 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server; // Initialize the server property
   private logger: Logger = new Logger('ChatGateway');
-  
-  handleConnection(
-    client: Socket, 
-    ) {
-    // Handle WebSocket connection
-    const accessToken = client.handshake.query.accessToken;
 
+  
+  handleConnection(client: Socket) {
+    const accessToken = client.handshake.query.accessToken;
+  
     if (typeof accessToken === 'string') {
-      // 'accessToken' is a valid string
       try {
-        // Verify the access token using your JWT service
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
-      // Notify other clients that a user has joined
-       this.connectedUsers.set( user.userId, user.nickname); 
-       console.log(this.connectedUsers)
+  
+        // Notify other clients that a user has joined
+        this.connectedUsers.set(user.userId, user.nickname);
+  
+        // Get the list of connected user objects from the map
+       // const connectedUserList = Array.from(this.connectedUsers.keys());
+  
+        // Broadcast the updated list to all connected clients
+      //  this.server.emit('connectedUsers', connectedUserList);
+  
         this.logger.log(`User ${user.userId} connected`);
-        this.server.emit('userJoined', { userId : user.userId });
-     
+        this.server.emit('userJoined', { userId: user.userId });
       } catch (error) {
-        // Handle token verification error here (e.g., unauthorized access)
         console.error('Access token verification failed:', error.message);
-        // Optionally, disconnect the WebSocket connection or take appropriate action
       }
     } else {
-      // Handle the case where 'accessToken' is not a valid string (e.g., an array or undefined)
       console.error('Invalid access token:', accessToken);
-      // Optionally, disconnect the WebSocket connection or take appropriate action
     }
-
-   
   }
 
   handleDisconnect(client: Socket) {
@@ -58,8 +55,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // Verify the access token using your JWT service
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
      // Now, 'user' contains the user information, and the access token is valid.
-     this.connectedUsers.delete(user.userId)
-       this.server.emit('userLeft', { userId:user.userId });
+      this.connectedUsers.delete(user.userId)
+      this.server.emit('userLeft', { userId:user.userId });
      
       } catch (error) {
         // Handle token verification error here (e.g., unauthorized access)
@@ -86,9 +83,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   
   @SubscribeMessage('listConnectedUsers')
-  handleListConnectedUsers(client: Socket) {
+  handleListConnectedUsers(client: Socket,
+    @GetUser() user:Users) {
+    console.log("listedUsers"+ user)
   // Get the list of connected user objects from the map
   const connectedUserList = Array.from(this.connectedUsers.keys());
-  client.emit('connectedUsers', connectedUserList);
+  this.server.emit('connectedUsers', connectedUserList);
 }
 }
