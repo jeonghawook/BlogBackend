@@ -13,7 +13,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private jwtService: JwtService,
   ) {}
 
-  private connectedUsers = new Map<Users, string>();
+  private connectedUsers = new Map<string, Socket>();
 
   @WebSocketServer()
   private server: Server; // Initialize the server property
@@ -28,7 +28,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
   
         // Notify other clients that a user has joined
-        this.connectedUsers.set(user.userId, user.nickname);
+        this.connectedUsers.set(user.nickname, client);
   
         // Get the list of connected user objects from the map
        // const connectedUserList = Array.from(this.connectedUsers.keys());
@@ -71,23 +71,32 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
  
   }
 
-  @SubscribeMessage('message')
-  handleMessage(client: Socket, payload: { text: string, recipientId: string }) {
+  @SubscribeMessage('MessageToServer')
+  handleMessage(client: Socket, payload: { text: string, to: string, myId:string }) {
     // Handle incoming chat messages
     console.log(payload)
-    const { text, recipientId } = payload;
+    const { text, to, myId } = payload;
     // Implement message handling logic (e.g., store messages, deliver to recipients)
 
+    const recipientClient = this.connectedUsers.get(to);
+    console.log(text)
+    recipientClient.emit('chatMessage', payload );
     // Broadcast the message to the recipient(s)
-    client.to(recipientId).emit('chatMessage', { text, senderId: client.id });
+   
+
+   
+
+    // if (recipientClient) {
+    //   // Send the message to the recipient
+    //   recipientClient.emit('chatMessage', { text, senderId: recipientId});
+    // }
   }
   
   @SubscribeMessage('listConnectedUsers')
-  handleListConnectedUsers(client: Socket,
-    @GetUser() user:Users) {
-    console.log("listedUsers"+ user)
+  handleListConnectedUsers(client: Socket) {
+    console.log("listedUsers")
   // Get the list of connected user objects from the map
-  const connectedUserList = Array.from(this.connectedUsers.keys());
+  const connectedUserList = Array.from(this.connectedUsers.keys())
   this.server.emit('connectedUsers', connectedUserList);
 }
 }
