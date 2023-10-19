@@ -61,29 +61,28 @@ export class PostsController {
   @Post('/createPosts')
   @UseInterceptors(FileInterceptor('file'))
   async createPost(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          // new MaxFileSizeValidator({maxSize:1000}),
-          new FileTypeValidator({ fileType: 'image/*' }),
-        ],
-      }),
-    )
+    @UploadedFile()
     file: Express.Multer.File,
     @GetUser() user: Users,
     @Body() createPostDTO: CreatePostDTO,
   ): Promise<void> {
-    console.log(user);
-    const imageFile = await this.uploadService.upload(
-      file.originalname,
-      file.buffer,
-      file.mimetype,
-    );
-    console.log(imageFile);
-    createPostDTO.images = [imageFile];
-    await this.postsService.createPost(user, createPostDTO);
+    try {
+      console.log("checking")
+      if (file) {
+        const imageFile = await this.uploadService.upload(
+          file.originalname,
+          file.buffer,
+          file.mimetype,
+        );
+        createPostDTO.images = [imageFile];
+      }
+   
+      await this.postsService.createPost(user, createPostDTO);
+    }catch (error) {
+      console.log(error)
+    }
   }
-
+   
   @Delete('/:postId')
   async deletePost(
     @GetUser() user: Users,

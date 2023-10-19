@@ -1,6 +1,6 @@
 import { Logger, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { GetUser, Public } from 'src/users/common/decorators';
 import { AtGuard } from 'src/users/common/guards/at.guard';
@@ -20,7 +20,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('ChatGateway');
 
   
-  handleConnection(client: Socket) {
+  handleConnection(@ConnectedSocket() client: Socket) {
     const accessToken = client.handshake.query.accessToken;
   
     if (typeof accessToken === 'string') {
@@ -48,28 +48,24 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {
     const accessToken = client.handshake.query.accessToken;
-
+console.log("disconnectin")
     if (typeof accessToken === 'string') {
-      // 'accessToken' is a valid string
       try {
-        // Verify the access token using your JWT service
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
-     // Now, 'user' contains the user information, and the access token is valid.
-      this.connectedUsers.delete(user.userId)
-      this.server.emit('userLeft', { userId:user.userId });
-     
+        const connectedUser = this.connectedUsers.get(user.nickname);
+
+        if (connectedUser === client) {
+          this.connectedUsers.delete(user.nickname);
+          this.server.emit('userLeft', { userId: user.userId });
+        }
       } catch (error) {
-        // Handle token verification error here (e.g., unauthorized access)
         console.error('Access token verification failed:', error.message);
-        // Optionally, disconnect the WebSocket connection or take appropriate action
       }
     } else {
-      // Handle the case where 'accessToken' is not a valid string (e.g., an array or undefined)
       console.error('Invalid access token:', accessToken);
-      // Optionally, disconnect the WebSocket connection or take appropriate action
     }
- 
   }
+
 
   @SubscribeMessage('MessageToServer')
   handleMessage(client: Socket, payload: { text: string, to: string, myId:string }) {
@@ -79,7 +75,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Implement message handling logic (e.g., store messages, deliver to recipients)
 
     const recipientClient = this.connectedUsers.get(to);
-    console.log(text)
+
     recipientClient.emit('chatMessage', payload );
     // Broadcast the message to the recipient(s)
    
