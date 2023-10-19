@@ -50,7 +50,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/blogbackend:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/CommunityBackend:${{ github.sha }}
 
   deploy:
     needs: build
@@ -62,8 +62,8 @@ jobs:
 #       - name: Pull Docker images
 #         run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml pull
       - name: Stop and remove existing containers
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/BlogBackend/BlogBackend/docker-compose.yml down
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/CommunityBackend/CommunityBackend/docker-compose.yml down
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/BlogBackend/BlogBackend/docker-compose.yml up -d --build
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/CommunityBackend/CommunityBackend/docker-compose.yml up -d --build
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/BlogBackend/BlogBackend/docker-compose.yml up -d
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/CommunityBackend/CommunityBackend/docker-compose.yml up -d
