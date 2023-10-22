@@ -9,6 +9,7 @@ import {
   Get,
   Req,
   Res,
+  Redirect,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -23,12 +24,14 @@ import { RTGuard } from './common/guards/rt.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { google } from './common/guards/gg.guard';
 import { PostsService } from 'src/posts/posts.service';
-
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService,
-    private postsService: PostsService,) {}
+  constructor(
+    private usersService: UsersService,
+    private postsService: PostsService,
+  ) {}
 
   @Public()
   @Post('/signup')
@@ -45,7 +48,6 @@ export class UsersController {
   @Post('/login')
   async signin(@Body() loginDto: LoginDto): Promise<Tokens> {
     try {
-   
       return await this.usersService.login(loginDto);
     } catch (error) {
       throw error;
@@ -69,7 +71,7 @@ export class UsersController {
     @GetUser('refreshToken') refreshToken: string,
     @GetUser() user: Users,
   ): Promise<{ accessToken: string }> {
-    console.log("checking")
+    console.log('checking');
     try {
       const accessToken = await this.usersService.refreshToken(
         user,
@@ -83,7 +85,7 @@ export class UsersController {
   }
 
   @Public()
-  @Get('/login/google')  // /:socialLogin으로 병합할수잇을까?
+  @Get('/login/google') // /:socialLogin으로 병합할수잇을까?
   @UseGuards(google) //AuthGuard만 dynamic하게 바꿔주면된다.흠.
   async googlelLogin() {}
 
@@ -96,27 +98,38 @@ export class UsersController {
   ): Promise<Tokens> {
     const { email, fullName } = req.user;
     console.log(email, fullName);
-    const {tokens,userId} = await this.usersService.socialLogin(fullName, email);
+    const { tokens, userId } = await this.usersService.socialLogin(
+      fullName,
+      email,
+    );
     return tokens;
   }
 
   @Public()
-  @Get('/login/kakao')  // /:socialLogin으로 병합할수잇을까?
+  @Get('/login/kakao') // /:socialLogin으로 병합할수잇을까?
   @UseGuards(AuthGuard('kakao')) //AuthGuard만 dynamic하게 바꿔주면된다.흠.
   async kakaoLogin() {}
 
   @Public()
   @Get('/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
+  @Redirect('http://localhost:3001/socialLogin', 302)
   async kakaoLoginCallback(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<Tokens> {
+  ): Promise<void> {
     const { email, fullName, kakaoToken } = req.user;
-    const { tokens, userId } = await this.usersService.socialLogin(fullName, email);
-    await this.postsService.insertStories(kakaoToken, userId);
-  
-    return tokens;
-  }
+    console.log(email);
 
+    const { tokens, userId } = await this.usersService.socialLogin(
+      fullName,
+      email,
+    );
+    await this.postsService.insertStories(kakaoToken, userId);
+    
+
+    res.cookie('accessToken', tokens.accessToken);
+    res.cookie('refreshToken', tokens.refreshToken);
+
+  }
 }

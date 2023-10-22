@@ -5,6 +5,9 @@ import { Strategy } from 'passport-kakao';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
+  check() {
+    console.log("checking")
+  }
   constructor() {
     super({
       clientID: process.env.KAKAO_ID,
@@ -12,6 +15,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
       callbackURL: "http://localhost:3000/users/kakao/callback",
     });
   }
+
 
   async validate(accessToken: string, refreshToken: string, data: any) {
     const response = data._json.kakao_account;
