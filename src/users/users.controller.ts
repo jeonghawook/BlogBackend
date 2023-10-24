@@ -113,7 +113,7 @@ export class UsersController {
   @Public()
   @Get('/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
-  @Redirect('http://localhost:3001/socialLogin', 302)
+  @Redirect('https://cacaocom.vercel.shop/socialLogin', 302)
   async kakaoLoginCallback(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
