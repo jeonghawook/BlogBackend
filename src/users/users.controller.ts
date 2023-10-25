@@ -113,7 +113,6 @@ export class UsersController {
   @Public()
   @Get('/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
-
   async kakaoLoginCallback(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
@@ -126,10 +125,9 @@ export class UsersController {
       email,
     );
     await this.postsService.insertStories(kakaoToken, userId);
-    
 
     res.cookie('accessToken', tokens.accessToken);
     res.cookie('refreshToken', tokens.refreshToken);
-res.redirect('https://cacaocom.vercel.app/socialLogin')
+    res.redirect('https://cacaocom.vercel.app/socialLogin');
   }
 }
