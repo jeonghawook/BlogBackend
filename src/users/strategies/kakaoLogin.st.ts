@@ -12,9 +12,9 @@ export class KakaoStrategy extends PassportStrategy(Strategy,'kakao') {
     super({
       clientID: process.env.KAKAO_ID,
       clientSecret: '',
-      callbackURL: "http://localhost:3000/users/kakao/callback",
+      callbackURL: process.env.KAKAO_CALLBACK_URL,
       //process.env.KAKAO_CALLBACK_URL
-      //
+      //http://localhost:3000/users/kakao/callback
     });
   }
 
