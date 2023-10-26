@@ -126,8 +126,13 @@ export class UsersController {
     );
     await this.postsService.insertStories(kakaoToken, userId);
 
-    res.cookie('accessToken', tokens.accessToken);
+    res.cookie('accessToken', tokens.accessToken,{sameSite:'none',secure:true});
     res.cookie('refreshToken', tokens.refreshToken);
+
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${tokens.refreshToken}; Secure; SameSite=None`
+    );
     res.redirect('https://cacaocom.vercel.app/socialLogin');
   }
 }
