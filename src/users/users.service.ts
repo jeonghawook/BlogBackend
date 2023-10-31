@@ -88,13 +88,21 @@ export class UsersService {
     //1.레디스에 없을때 3.기간이 다 됬으떄 4.
     let RTfromRedis = await this.client.get(`${user.userId}:RT`);
     if (!RTfromRedis) {
+      console.log(1)
+      console.log(user)
       RTfromRedis = await this.userRepository.refreshToken(user.userId);
+      console.log(2)
+     
       if (!RTfromRedis) throw new UnauthorizedException('다시 로그인해주세요'); //프론트에서도 없애는 방법을 찾아야함
       await this.client.set(`${user.userId}:RT`, RTfromRedis);
     }
     //2.요청과 다를때
+    console.log(3)
+
     if (refreshToken !== RTfromRedis) {
       await this.client.del(`${user.userId}:RT`);
+      console.log(4)
+
       await this.userRepository.removeRefreshToken(user.userId);
       //위에 UnauthorizedException으로 해결할수있으면 수정하기
       throw new HttpException(

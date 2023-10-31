@@ -111,12 +111,13 @@ export class PostsRepository {
       const latestKakaoPost = await this.posts.findOne({
         where: {
           kakao_postId: Not(IsNull()),
+          userId: userId
         },
         order: {
           postId: 'DESC', 
            },
       });
-  
+        console.log(latestKakaoPost)
         const lastKakaoPostId = latestKakaoPost.kakao_postId;
 
       
@@ -130,7 +131,7 @@ export class PostsRepository {
         const postDescription = postData.content;
         const imagesData = postData.media;
         const createdAt = postData.created_at;
-        const largeImages = [];
+        const largeImages = null;
         if (imagesData !== undefined) {
 
           for (let i = 0; i < imagesData.length; i++) {

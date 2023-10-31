@@ -110,8 +110,8 @@ export class UsersController {
   @Get('/login/kakao') // /:socialLogin으로 병합할수잇을까?
   async kakaoLogin(
   ) {
-    const CLIENT_ID = "51f39f3e4994f41f3dd78b0a4d174a86"
-    const REDIRECT_URI = "https://cacaocom.vercel.app/socialLogin"
+    const CLIENT_ID = process.env.KAKAO_ID
+    const REDIRECT_URI = process.env.KAKAO_CALLBACK_URL
     const url = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     return url
   }
@@ -124,8 +124,8 @@ export class UsersController {
     ): Promise<Tokens> {
    const {kakaoCode} = code
    console.log(kakaoCode)
-    const CLIENT_ID = "51f39f3e4994f41f3dd78b0a4d174a86"
-    const REDIRECT_URI = "https://cacaocom.vercel.app/socialLogin"
+    const CLIENT_ID = process.env.KAKAO_ID
+    const REDIRECT_URI = process.env.KAKAO_CALLBACK_URL
     const params = {
       client_id: CLIENT_ID,
       code:kakaoCode,

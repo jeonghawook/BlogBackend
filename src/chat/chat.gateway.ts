@@ -27,9 +27,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       try {
         const user = this.jwtService.verify(accessToken, { secret: 'ATlife4u' });
   
-        // Notify other clients that a user has joined
-        this.connectedUsers.set(user.nickname, client);
-  
+        this.connectedUsers.set(user.userId, client);
+
         // Get the list of connected user objects from the map
        // const connectedUserList = Array.from(this.connectedUsers.keys());
   
@@ -71,12 +70,12 @@ console.log("disconnectin")
   handleMessage(client: Socket, payload: { text: string, to: string, myId:string }) {
     // Handle incoming chat messages
     console.log(payload)
+  
     const { text, to, myId } = payload;
     // Implement message handling logic (e.g., store messages, deliver to recipients)
 
     const recipientClient = this.connectedUsers.get(to);
-
-    recipientClient.emit('chatMessage', payload );
+    recipientClient.emit('msg-recieve', payload );
     // Broadcast the message to the recipient(s)
    
 
