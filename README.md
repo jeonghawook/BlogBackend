@@ -9,11 +9,21 @@
 <img src="https://github.com/jeonghawook/CommunityBackend/assets/126029736/eba8d292-9014-4583-93d3-7d095521d516">
 </details>
 
-<details>
-<summary>주요기술</summary>
-<br>
-<img src="">
-</details>
+
+## **주요기술**
+<table>
+  <tr>
+  <td>CI/CD</td>
+  <td>채팅</td>
+ 
+ </tr>
+ <tr>
+  <td>소셜로그인</td>
+  <td>HTTPS</td>
+ 
+ </tr>
+
+</table>
 
 ## **아키택처**
 <img src="https://github.com/jeonghawook/CommunityBackend/assets/126029736/7593b462-b655-4884-8176-eb98ab1cf1c4">
@@ -22,36 +32,45 @@
 <table>
  <tr>
     <td><strong>HTTPS</strong></td>
-    <td> - SSL/TSL 발급을 통하여 도메인에 대한 보안성과 검색 노출 빈도를 증가<br />
-- FE에서 vercel사용을 위하여 구축</td>
+    <td> - SSL/TSL 발급을 통하여 도메인에 보안성 강화 <br />
+   </td>
   </tr>
   <tr>
-    <td><strong>MySQL</strong></td>
+    <td><strong>Postgres</strong></td>
     <td> - 대부분 정형화된 데이터여서 SQL로 선정<br />
-- MySQL로 프로젝트의 모든 기능이 가능하다 판단하여 팀원 모두 숙련도가 높은 DB로 선정</td>
+- 추후 Postgres에서 사용할 다양한 plugin과 기능을 고려해서 선정</td>
   </tr>
   <tr>
     <td><strong>Redis</strong></td>
-    <td>- 이메일 인증코드, Refresh Token, Device Token의 만료시간 관리의 편의성<br />
-- Device Token의 경우 Update가 많지 않을거라 판단하여 Global Cache를 통해 성능향상을 위해 선정</td>
+    <td>- JWT RefreshToken의 관리의 편의성<br />
+- 추후 자주 사용되는 부분을 캐싱하거나 db에 자주 조회되서 cost가 많이 발생하는 부분을 redis로 해결</td>
   </tr>
   <tr>
     <td><strong>S3</strong></td>
-    <td>CI/CD 파이프라인 구축과 사진 업로드를 위해 선정</td>
+    <td>- 사진 업로드</td>
+  </tr>
+   <tr>
+    <td><strong>Socket.io</strong></td>
+    <td>- 실시간 채팅을 위해서 선정<br />
+- 추후 pub-sub 아키텍쳐와 알림 기능에도 사용될 예정 </td>
+  </tr>
+   <tr>
+    <td><strong>CI/CD</strong></td>
+    <td>- 개발 환경과 운영 환경 사이의 차이를 최소화 해주는 DOCKER CD로 선정<br />
+- Githbub Action/ 다른 CI 보다 러닝커브가 낮고 편리하게 관리가능</td>
+  </tr>
+  <tr>
+    <td><strong>Bcrypt</strong></td>
+    <td>- 다양한 보안중 brute force에 대응하기 위해 선정<br />
+ </td>
   </tr>
 </table>
 
 ## **트러블슈팅** 
-<details>
-<summary>주요기술</summary>
-<br>
-<img src="">
-</details>
-<details>
-<summary>주요기술</summary>
-<br>
-<img src="">
-</details>
+[카카오 로그인 트러블 ! ](https://velog.io/@saro3/%EC%B9%B4%EC%B9%B4%EC%98%A4-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B3%BC%EC%A0%95)
+[DOCKER permission ERROR ! ](https://velog.io/@saro3/Docker-GithubAction)
 
-### **FE에서 화면 보기**
+<br>
+
+## **FE에서 화면 보기**
  [FRONTEND GIT으로 바로가기 ! ](https://github.com/jeonghawook/CommunityFrontend)
