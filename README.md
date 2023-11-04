@@ -15,5 +15,20 @@
 <img src="https://github.com/jeonghawook/CommunityBackend/assets/126029736/7593b462-b655-4884-8176-eb98ab1cf1c4">
 </details>
 
+<details>
+<summary>주요기술</summary>
+<br>
+<img src="">
+</details>
 
-
+# **트러블슈팅** 
+<details>
+<summary>주요기술</summary>
+<br>
+<img src="">
+</details>
+<details>
+<summary>주요기술</summary>
+<br>
+<img src="">
+</details>
